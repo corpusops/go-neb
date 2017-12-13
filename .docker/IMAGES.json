@@ -1,0 +1,9 @@
+{
+  "images": [
+    {
+      "tag": "corpusops/go-neb:latest",
+      "builder_type": "docker",
+      "extra_args": ""
+    }
+  ]
+}
