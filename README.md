@@ -172,7 +172,7 @@ List of Realms:
  - [JIRA](https://matrix-org.github.io/go-neb/pkg/github.com/matrix-org/go-neb/realms/jira/index.html#Realm)
  
 Authentication via HTTP:
- - [Github](https://matrix-org.github.io/go-neb/pkg/github.com/matrix-org/go-neb/realms/github/index.html#Realm.RequestAuthSession)
+ - [Github](https://matrix-org.github.io/go-neb/pkg/github.com/matrix-org/go-neb/realms/github/index.html#Realm.RequestAuthSession)go-neb
  - [JIRA](https://matrix-org.github.io/go-neb/pkg/github.com/matrix-org/go-neb/realms/jira/index.html#Realm.RequestAuthSession)
 
 Authentication via the config file:
@@ -281,3 +281,5 @@ DATABASE_URL=/data/go-neb.db?_busy_timeout=5000
 ```
 
 The image exposes port `4050` and a volume at `/data`. The `BASE_URL` environment variable needs to be set, a volume should be mounted at `/data` and port `4050` should be appropriately mapped as desired.
+
+test
