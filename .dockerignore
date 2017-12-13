@@ -3,3 +3,5 @@ vendor/src
 pkg
 bin
 .git
+.git
+/local
