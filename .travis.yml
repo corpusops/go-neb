@@ -36,7 +36,7 @@ install:
   - sh -c "$apply_role roles/corpusops.roles/services_virt_docker/role.yml"
   - i=$(whoami) && sudo chown -Rf $i $COPS_ROOT
 script:
-  - cd "$TRAVIS_BUILD_DIR" && ./build-docker-image.sh
+  - cd "$TRAVIS_BUILD_DIR" && ./cbuild-docker-image.sh
 after_success:
   - docker images
   - |
