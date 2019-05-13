@@ -19,6 +19,7 @@ import (
 	"github.com/matrix-org/go-neb/polling"
 	_ "github.com/matrix-org/go-neb/realms/github"
 	_ "github.com/matrix-org/go-neb/realms/jira"
+	_ "github.com/matrix-org/go-neb/services/alertmanager"
 	_ "github.com/matrix-org/go-neb/services/echo"
 	_ "github.com/matrix-org/go-neb/services/giphy"
 	_ "github.com/matrix-org/go-neb/services/github"
@@ -238,6 +239,7 @@ func main() {
 				DisableSorting:   false,
 			}, &dugong.DailyRotationSchedule{GZip: false},
 		))
+		log.SetOutput(ioutil.Discard)
 	}
 
 	log.Infof("Go-NEB (%+v)", e)

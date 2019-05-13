@@ -79,6 +79,9 @@ Invite the bot user into a Matrix room and type `!echo hello world`. It will rep
 ### Travis CI
  - Ability to receive incoming build notifications.
  - Ability to adjust the message which is sent into the room.
+ 
+### Alertmanager
+ - Ability to receive alerts and render them with go templates
 
 
 # Installing
@@ -105,7 +108,7 @@ BIND_ADDRESS=:4050 DATABASE_TYPE=sqlite3 DATABASE_URL=go-neb.db?_busy_timeout=50
  - `DATABASE_URL` is where to find the database file. One will be created if it does not exist. It is a URL so parameters can be passed to it. We recommend setting `_busy_timeout=5000` to prevent sqlite3 "database is locked" errors.
  - `BASE_URL` should be the public-facing endpoint that sites like Github can send webhooks to.
  - `CONFIG_FILE` is the path to the configuration file to read from. This isn't included in the example above, so Go-NEB will operate in HTTP mode.
-
+ - `LOG_DIR` is a directory that log files will be written to, with log rotation enabled. If set, logging to stderr will be disabled.
 Go-NEB needs to be "configured" with clients and services before it will do anything useful. It can be configured via a configuration file OR by an HTTP API.
 
 ## Configuration file
@@ -225,7 +228,12 @@ sensible-browser http://localhost:6060/pkg/github.com/matrix-org/go-neb
 
 ## Docker image
 
-There is a `Dockerfile` in the root of the repository and a `build-docker-image.sh` script that uses an alpine-based golang container to build `go-neb` (note that this will overwrite host-built binaries in `pkg/` and `bin/`) and then builds the docker image using that binary.
+To get started quickly, use the image from docker.io:
+```
+docker run -v /path/to/data:/data -e "BASE_URL=http://your.public.url:4050" matrixdotorg/go-neb
+```
+
+If you'd prefer to build the file yourself, clone this repository and build the `Dockerfile`.
 
 The image sets the following environment variables:
 ```

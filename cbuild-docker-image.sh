@@ -2,7 +2,7 @@
 
 set -e
 
-if [[ -z ${NOBUILD-} ]];then
+if [[ -n ${NOBUILD-} ]];then
 docker run \
     --rm \
     -v "$PWD":/usr/src/myapp \

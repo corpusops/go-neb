@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"html"
 	"net/http"
-	"net/url"
 	"strconv"
 	"time"
 
@@ -30,7 +29,7 @@ var (
 	pollCounter = prometheus.NewCounterVec(prometheus.CounterOpts{
 		Name: "goneb_rss_polls_total",
 		Help: "The number of feed polls from RSS services",
-	}, []string{"url", "http_status"})
+	}, []string{"http_status"})
 )
 
 const minPollingIntervalSeconds = 60 * 5 // 5 min (News feeds can be genuinely spammy)
@@ -200,21 +199,15 @@ func (s *Service) OnPoll(cli *gomatrix.Client) time.Time {
 }
 
 func incrementMetrics(urlStr string, err error) {
-	// extract domain part of RSS feed URL to get coarser (more useful) statistics
-	domain := urlStr
-	u, urlErr := url.Parse(urlStr)
-	if urlErr == nil {
-		domain = u.Host
-	}
 	if err != nil {
 		herr, ok := err.(gofeed.HTTPError)
 		statusCode := 0 // e.g. network timeout
 		if ok {
 			statusCode = herr.StatusCode
 		}
-		pollCounter.With(prometheus.Labels{"url": domain, "http_status": strconv.Itoa(statusCode)}).Inc()
+		pollCounter.With(prometheus.Labels{"http_status": strconv.Itoa(statusCode)}).Inc()
 	} else {
-		pollCounter.With(prometheus.Labels{"url": domain, "http_status": "200"}).Inc() // technically 2xx but gofeed doesn't tell us which
+		pollCounter.With(prometheus.Labels{"http_status": "200"}).Inc() // technically 2xx but gofeed doesn't tell us which
 	}
 }
 
@@ -355,12 +348,18 @@ func (s *Service) sendToRooms(cli *gomatrix.Client, feedURL string, feed *gofeed
 	return nil
 }
 
-// SomeOne posted a new article: Title Of The Entry ( https://someurl.com/blag )
 func itemToHTML(feed *gofeed.Feed, item gofeed.Item) gomatrix.HTMLMessage {
-	return gomatrix.GetHTMLMessage("m.notice", fmt.Sprintf(
-		"<i>%s</i> posted a new article: %s ( %s )",
-		html.EscapeString(feed.Title), html.EscapeString(item.Title), html.EscapeString(item.Link),
-	))
+	return gomatrix.HTMLMessage{
+		Body: fmt.Sprintf("%s: %s (%s)",
+			html.EscapeString(feed.Title), html.EscapeString(item.Title), html.EscapeString(item.Link)),
+		MsgType: "m.notice",
+		Format: "org.matrix.custom.html",
+		FormattedBody: fmt.Sprintf("<strong>%s</strong>:<br><a href=\"%s\"><strong>%s</strong></a>",
+			html.EscapeString(feed.Title), html.EscapeString(item.Link), html.EscapeString(item.Title)),
+			// <strong>FeedTitle</strong>:
+			// <br>
+			// <a href="url-of-the-entry"><strong>Title of the Entry</strong></a>
+	  }
 }
 
 func ensureItemsHaveGUIDs(feed *gofeed.Feed) {
